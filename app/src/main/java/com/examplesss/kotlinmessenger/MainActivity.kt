@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 Log.d("MainActivity" , "Error message:" + it.message)
+                Toast.makeText(this,"Failed to create a user:"+ it.message , Toast.LENGTH_SHORT).show()
             }
     }
 

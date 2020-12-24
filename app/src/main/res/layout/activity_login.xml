@@ -39,8 +39,11 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/button_register_login"
         android:text="Login"
-        app:backgroundTint="@android:color/darker_gray"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:backgroundTint="#2B672E"
         app:layout_constraintEnd_toEndOf="@+id/password_text"
         app:layout_constraintStart_toStartOf="@+id/password_text"
         app:layout_constraintTop_toBottomOf="@+id/password_text" />

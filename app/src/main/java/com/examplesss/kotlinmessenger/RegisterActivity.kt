@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -42,10 +43,15 @@ class RegisterActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
             Log.d("RegisterActivity", "Photo is selected")
+
             selectedPhotoUri = data.data
+
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver , selectedPhotoUri)
-            val bitmapDrawable = BitmapDrawable(bitmap)
-            select_photo_button.setBackgroundDrawable(bitmapDrawable)
+
+            selectphoto_imageview_register.setImageBitmap(bitmap)
+            select_photo_button.alpha = 0f 
+            //val bitmapDrawable = BitmapDrawable(bitmap)
+            //select_photo_button.setBackgroundDrawable(bitmapDrawable)
 
         }
     }
@@ -87,9 +93,26 @@ class RegisterActivity : AppCompatActivity() {
             ref.putFile(selectedPhotoUri!!)
                 .addOnSuccessListener {
                     Log.d("RegisterActivity" , "Succesfully uploaded image: ${it.metadata?.path}")
+
+                    ref.downloadUrl.addOnSuccessListener {
+                        Log.d("Register Activity" , "Image URL: $it")
+
+                        saveUserToFirebase(it.toString())
+                    }
                 }
+        }
 
+        private fun saveUserToFirebase(profileImageURL: String) {
+            val uid = FirebaseAuth.getInstance().uid ?: ""
+            val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+            val user = User(uid , name_edittext_register.text.toString() , profileImageURL )
 
+            ref.setValue(user)
+                .addOnSuccessListener {
+                    Log.d("RegisterActivity" , "Finally we saved user to database")
+                }
         }
 
 }
+
+class User(val uid:String , val username: String , val profileImageURL: String)
